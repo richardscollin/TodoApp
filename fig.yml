@@ -1,0 +1,9 @@
+db:
+  image: mongo:latest
+
+web:
+  build: .
+  links:
+    - db
+  ports:
+    - "3000:3000"

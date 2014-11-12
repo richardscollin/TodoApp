@@ -18,9 +18,19 @@ Then:
 ```bash
 $ npm start
 ```
-A MongoDB url must be passed in the **MONGO_URL** environment variable. The default is `mongodb://localhost/todo_app`.
+A MongoDB url must be passed in the **MONGO_URL** environment variable.
 
 e.g.
 ```bash
 $ MONGO_URL=mongodb://user:pass@hostname:port/db_name npm start
+```
+
+## Running with fig and docker
+Build docker images:
+```bash
+$ fig build
+```
+Start:
+```bash
+$ fig up
 ```
