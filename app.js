@@ -60,7 +60,7 @@ app.use(function(err, req, res, next) {
 
 module.exports = exports = new Promise(function(resolve, reject) {
     // Connect to database
-    mongoose.connect('mongodb url here');
+    mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost/todo_app');
     db.on('open', function() {
         resolve(app);
     });
