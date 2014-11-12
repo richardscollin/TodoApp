@@ -22,5 +22,5 @@ A MongoDB url must be passed in the **MONGO_URL** environment variable. The defa
 
 e.g.
 ```bash
-$ MONGO_URL=mongodb://user:pass@hostname:port/db_name
+$ MONGO_URL=mongodb://user:pass@hostname:port/db_name npm start
 ```
