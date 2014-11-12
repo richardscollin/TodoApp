@@ -1,15 +1,17 @@
 'use strict';
 
+var Promise = require('bluebird');
+var mongoose = require('mongoose');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var api = require('./routes/api');
 
 var app = express();
+var db = mongoose.connection;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -56,4 +58,9 @@ app.use(function(err, req, res, next) {
     });
 });
 
-module.exports = exports = app;
+module.exports = exports = new Promise(function(resolve, reject) {
+    // Connect to database
+    mongoose.connect('mongodb url here');
+    db.on('open', resolve);
+    db.on('error', reject);
+});
