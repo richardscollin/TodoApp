@@ -61,6 +61,8 @@ app.use(function(err, req, res, next) {
 module.exports = exports = new Promise(function(resolve, reject) {
     // Connect to database
     mongoose.connect('mongodb url here');
-    db.on('open', resolve);
+    db.on('open', function() {
+        resolve(app);
+    });
     db.on('error', reject);
 });
