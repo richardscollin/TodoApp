@@ -4,6 +4,11 @@ var express = require('express');
 var mongoose = require('mongoose');
 var router = express.Router();
 
+var ListItem = mongoose.model('listItem', mongoose.Schema({
+    name: String,
+    description: String
+}));
+
 router.get('/', function(req, res) {
     res.send({
         data: "Hello world",
@@ -11,26 +16,21 @@ router.get('/', function(req, res) {
     });
 });
 
-var ListItem = mongoose.model('listItem', mongoose.Schema({
-    name: String,
-    description: String
-}));
 
 router.get('/hello/:id', function(req, res) {
-    var lastItem = new ListItem({ name: req.params['id'] });
-    lastItem.save(function (err) {
+    var listItem = new ListItem({ name: req.params.id });
+    listItem.save(function(err) {
         if (err) {
-            res.send({
+            return res.send({
                 message: err,
-                status: "Error"
-            });
-        } else {
-            res.send({
-                data: "Hello world",
-                status: "success"
+                status: "error"
             });
         }
+        return res.send({
+            data: "",
+            status: "success"
+        });
     });
 });
 
-module.exports = router;
+module.exports = exports = router;

@@ -1,3 +1,4 @@
+'use strict';
 
 $(function() {
     $("#todo-add").submit(function(event) {
