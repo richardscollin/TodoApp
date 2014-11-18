@@ -6,18 +6,14 @@ var router = express.Router();
 // Import models
 var TodoItem = require('../models/todoitem');
 
-router.get('/hello/:id', function(req, res) {
+router.get('/test/:id', function(req, res) {
     var item = new TodoItem({ name: req.params.id });
-    item.save(function(err) {
-        if (err) {
-            return res.send({
-                message: err,
-                status: "error"
-            });
-        }
-        return res.send({
-            data: "",
-            status: "success"
+    item.saveAsync().then(function() {
+        res.json({ status: 'success' });
+    }).catch(function(err) {
+        res.json(500, {
+            status: 'error',
+            message: err.message
         });
     });
 });
