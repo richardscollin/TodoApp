@@ -18,6 +18,11 @@ var db = mongoose.connection;
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+// Set globals
+app.locals.env = app.get('env');
+app.locals.title = 'Todo App';
+app.locals.description = 'The most awesome todo app in the world.';
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
