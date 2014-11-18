@@ -9,23 +9,14 @@ html
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css')
     link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.1.6/css/ripples.min.css')
     link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.1.6/css/material-wfont.min.css')
-    <!--[if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script><![endif]-->
+    link(rel='stylesheet', href='/css/main.css')
+    <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
     style [ng-cloak] { display: none; }
   body
-    nav(role='navigation').navbar.navbar-default
-      div.container
-        div.navbar-header
-          button(type='button').navbar-toggle
-            span.sr-only Toggle Navigation
-            span.icon-bar
-            span.icon-bar
-            span.icon-bar
-          a.navbar-brand Todo App
-        div.collapse.navbar-collapse
-          ul.nav.navbar-nav.navbar-right
-            li: a Foo
-            li: a Bar
-            li: a Baz
+    include partials/topnav
     block content
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.1.6/js/ripples.min.js')
