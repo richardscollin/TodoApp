@@ -2,7 +2,10 @@
 
 'use strict';
 
-var debug = require('debug')('Todo');
+var debug = require('debug')('Todo'),
+    rimraf = require('rimraf');
+
+rimraf.sync('public_generated');
 
 require('../app').then(function(app) {
     app.set('port', process.env.PORT || 3000);

@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
 bower_components
+public_generated
 .grunt
 *.log
 *.pid
