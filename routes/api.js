@@ -8,6 +8,12 @@ var express = require('express'),
 // Import models.
 var User = require('../models/user.js');
 
+/**
+ * Creates a new user.
+ * @param username The username to create.
+ * @param password The password to create.
+ * @param signin=false Whether or not to sign in after authentification.
+ */
 router.post('/users/new', function(req, res, next) {
     if (req.session.loggedIn) {
         var err = new Error('Already logged in');
@@ -50,9 +56,26 @@ router.post('/users/new', function(req, res, next) {
     }).catch(next);
 });
 
-//Error handler for REST api.
+/**
+ * Gets a user's info.
+ */
+router.get('/users/:username', function(req, res, next) {
+    return User.findOneAsync({
+        username: req.params.username
+    }, { username: true }).then(function(user) {
+        if (!user) {
+            var err = new Error('User does not exist');
+            err.status = 404;
+            return next(err);
+        }
+        return res.json({ status: 'success', data: user });
+    }).catch(console.log);
+});
+
+/**
+ * RESTful api error handler.
+ */
 router.use(function(err, req, res, next) {
-    console.log('fooafasdfsa');
     res.status(err.status || 500);
     res.json({
         status: 'error',

@@ -2,22 +2,30 @@ extends layout
 
 block content
   div(ng-controller='RegistrationCtrl as reg').container
-    h1 Create a new account
-    form(role='form' name='form').well
-      div(ng-class='{ "has-error": form.username.$invalid  && form.username.$touched }').form-group
-        label.control-label Username
-        span(style='display: none')#dup-user-message.help-block Username already exists.
-        input(type='text' name='username' placeholder='Username' ng-model='reg.username' ng-pattern='reg.usernamePattern' ng-required='true'
-            data-hint='Username is trimmed of whitespace automatically. Must be 3-18 characters [alphanumeric, _, -, .]').form-control
-      div(ng-class='{ "has-error": form.password.$invalid && form.password.$touched }').form-group
-        label.control-label Password
-        input(type='password' name='password' placeholder='Password' ng-model='reg.password' ng-pattern='reg.passwordPattern' ng-required='true'
-            data-hint='Password must be 6-128 characters.').form-control
-      div(ng-class='{ "has-error": form.passwordConfirm.$invalid && form.passwordConfirm.$touched }').form-group
-        label.control-label Confirm Password
-        input(type='password' name='passwordConfirm' placeholder='Confirm Password' ng-model='reg.passwordConfirm' ng-required='true').form-control
-      div.form-group
-        button(type='submit' ng-click='reg.register()' ng-disabled='form.$invalid').btn.btn-primary Register
+    div(ng-show="!reg.registered").well
+      h1 Create a new account
+      form(role='form' name='reg.form')
+        div(ng-class='{ "has-error": reg.form.username.$invalid && reg.form.username.$touched }').form-group
+          label.control-label Username
+          div(role='alert' ng-show='reg.duplicateUsername').alert.alert-danger Your username already exists, please pick another one.
+          input(type='text' name='username' placeholder='Username' ng-model='reg.username' ng-pattern='reg.usernamePattern' ng-required='true'
+              data-hint='Username is trimmed of whitespace automatically. Must be 3-18 characters [alphanumeric, _, -, .]').form-control
+        div(ng-class='{ "has-error": reg.form.password.$invalid && reg.form.password.$touched }').form-group
+          label.control-label Password
+          input(type='password' name='password' placeholder='Password' ng-model='reg.password'
+              ng-pattern='reg.passwordPattern' ng-required='true' ng-change='reg.validatePassword()'
+              data-hint='Password must be 6-128 characters.').form-control
+        div(ng-class='{ "has-error": reg.form.passwordConfirm.$invalid && reg.form.passwordConfirm.$touched }').form-group
+          label.control-label Confirm Password
+          input(type='password' name='passwordConfirm' placeholder='Confirm Password'
+              ng-model='reg.passwordConfirm' ng-change='reg.validatePassword()' ng-required='true').form-control
+        div.form-group
+          button(type='submit' ng-click='reg.register()' ng-disabled='reg.form.$invalid').btn.btn-primary Register
+
+    div(ng-show="reg.registered").well
+      h1 Welcome, {{reg.username}}!
+      p Thank you for creating an account with us. We hope that you enjoy using our service.
+      a(href='/').btn.btn-primary Enter
 
 block scripts
     script(src='/js/controllers/registrationctrl.js')

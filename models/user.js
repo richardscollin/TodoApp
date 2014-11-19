@@ -5,8 +5,9 @@ var Promise = require('bluebird'),
     Schema = mongoose.Schema,
     crypto = Promise.promisifyAll(require('crypto'));
 
-// Length of salt and key.
-var KEY_LEN = 256;
+// Hashing settings
+var KEY_LEN = 256,
+    ITERATIONS = 100000;
 
 var schema = new Schema({
     username: {
@@ -16,8 +17,8 @@ var schema = new Schema({
         trim: true,
         required: true
     },
-    password: { type: String, required: true },
-    salt: String
+    password: { type: Buffer, required: true },
+    salt: Buffer
 });
 
 /**
@@ -55,7 +56,8 @@ schema.pre('save', function(next) {
 
     return crypto.randomBytesAsync(KEY_LEN).then(function(buffer) {
         user.salt = buffer;
-        return crypto.pbkdf2Async(user.password, user.salt, 10000, KEY_LEN);
+        return crypto.pbkdf2Async(user.password,
+                user.salt, ITERATIONS, KEY_LEN);
     }).then(function(derivedKey) {
         user.password = derivedKey;
         return next();
