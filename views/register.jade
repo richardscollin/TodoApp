@@ -3,20 +3,21 @@ extends layout
 block content
   div(ng-controller='RegistrationCtrl as reg').container
     h1 Create a new account
-    form(role='form').well
-      div(ng-class='{ "has-error": !reg.usernameIsValid() }').form-group
+    form(role='form' name='form').well
+      div(ng-class='{ "has-error": form.username.$invalid  && form.username.$touched }').form-group
         label.control-label Username
-        input(type='text', placeholder='Username', ng-model='reg.username',
+        span(style='display: none')#dup-user-message.help-block Username already exists.
+        input(type='text' name='username' placeholder='Username' ng-model='reg.username' ng-pattern='reg.usernamePattern' ng-required='true'
             data-hint='Username is trimmed of whitespace automatically. Must be 3-18 characters [alphanumeric, _, -, .]').form-control
-      div.form-group
+      div(ng-class='{ "has-error": form.password.$invalid && form.password.$touched }').form-group
         label.control-label Password
-        input(type='password', placeholder='Password', ng-model='reg.password'
+        input(type='password' name='password' placeholder='Password' ng-model='reg.password' ng-pattern='reg.passwordPattern' ng-required='true'
             data-hint='Password must be 6-128 characters.').form-control
-      div.form-group
+      div(ng-class='{ "has-error": form.passwordConfirm.$invalid && form.passwordConfirm.$touched }').form-group
         label.control-label Confirm Password
-        input(type='password', placeholder='Confirm Password', ng-model='reg.passwordConfirm').form-control
+        input(type='password' name='passwordConfirm' placeholder='Confirm Password' ng-model='reg.passwordConfirm' ng-required='true').form-control
       div.form-group
-        button(type='submit', ng-click='reg.register()').btn.btn-primary Register
+        button(type='submit' ng-click='reg.register()' ng-disabled='form.$invalid').btn.btn-primary Register
 
 block scripts
     script(src='/js/controllers/registrationctrl.js')
