@@ -8,12 +8,12 @@ router.get('/', function(req, res) {
 });
 
 router.get('/register', function(req, res) {
-    res.render('register');
+    res.render('register', { title: 'Create a new account' });
 });
 
-// Handle registration requests
-router.post('/register', function(req, res) {
-    res.send(req.body);
+router.get('/signout', function(req, res) {
+    req.session.destroy();
+    return res.redirect('/');
 });
 
 module.exports = exports = router;

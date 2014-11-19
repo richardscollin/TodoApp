@@ -1,18 +1,22 @@
 extends layout
 
 block content
-  div.container
-    h1 Create an account
-    form(role='form', method='post', action='/register').well
-      div.form-group
+  div(ng-controller='RegistrationCtrl as reg').container
+    h1 Create a new account
+    form(role='form').well
+      div(ng-class='{ "has-error": !reg.usernameIsValid() }').form-group
         label.control-label Username
-        div
-          input(type='text', placeholder='Username', name='username').form-control
+        input(type='text', placeholder='Username', ng-model='reg.username',
+            data-hint='Username is trimmed of whitespace automatically. Must be 3-18 characters [alphanumeric, _, -, .]').form-control
       div.form-group
         label.control-label Password
-        input(type='password', placeholder='Password', name='password').form-control
+        input(type='password', placeholder='Password', ng-model='reg.password'
+            data-hint='Password must be 6-128 characters.').form-control
       div.form-group
         label.control-label Confirm Password
-        input(type='password', placeholder='Confirm Password').form-control
+        input(type='password', placeholder='Confirm Password', ng-model='reg.passwordConfirm').form-control
       div.form-group
-        button(type='submit', action='/').btn.btn-primary Register
+        button(type='submit', ng-click='reg.register()').btn.btn-primary Register
+
+block scripts
+    script(src='/js/controllers/registrationctrl.js')
