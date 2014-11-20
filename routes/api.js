@@ -29,24 +29,12 @@ router.get('/test', hasToken, function(req, res) {
  * Creates a new user.
  * @param username The username to create.
  * @param password The password to create.
- * @param signin=false Whether or not to sign in after authentification.
  */
 router.post('/users/new', function(req, res, next) {
-    if (req.session.loggedIn) {
-        var err = new Error('Already logged in');
-        err.status = 403;
-        return next(err);
-    }
-    var user = new User({
+    new User({
         username: req.body.username,
         password: req.body.password
-    });
-
-    return user.saveAsync().then(function(user) {
-        if (req.body.signin) {
-            req.session.username = user[0].username;
-            req.session.loggedIn = true;
-        }
+    }).saveAsync().then(function(user) {
         return res.json({
             status: 'success',
             data: {

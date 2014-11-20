@@ -15,8 +15,7 @@ angular.module('app.controllers')
         self.duplicateUsername = false;
         $http.post('/api/users/new', {
             username: this.username,
-            password: this.password,
-            signin: true
+            password: this.password
         }).success(function(data) {
             if (data.status !== 'success') { return; }
             self.username = data.data.username;
