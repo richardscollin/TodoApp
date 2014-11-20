@@ -10,6 +10,10 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var sassMiddleware = require('node-sass-middleware');
+var passport = require('passport');
+
+// Load passport
+require('./auth');
 
 var routes = require('./routes');
 var api = require('./routes/api');
@@ -58,6 +62,9 @@ app.use(function(req, res, next) {
     res.locals.session = req.session;
     return next();
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', routes);
 app.use('/api', api);
