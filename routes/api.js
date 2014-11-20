@@ -2,11 +2,16 @@
 
 var express = require('express'),
     router = express.Router(),
+    oauth2 = require('../oauth'),
+    // passport = require('passport'),
     mongoose = require('mongoose'),
     ValidationError = mongoose.Error.ValidationError;
 
+
 // Import models.
 var User = require('../models/user.js');
+
+// router.post('/signin', passport.authenticate('local' ));
 
 /**
  * Creates a new user.
@@ -39,20 +44,13 @@ router.post('/users/new', function(req, res, next) {
     }).catch(ValidationError, function(e) {
         if (e.errors.username && e.errors.username.message ===
                 'Username already exists') {
-            return res.status(409).json({
-                status: 'error',
-                message: 'Username already exists'
-            });
+            var err = new Error('Username already exists');
+            err.status = 409;
+            return next(err);
         }
-        console.log(e);
-        return res.status(400).json({
-            status: 'error',
-            message: 'Invalid fields',
-            fields: {
-                username: !!e.errors.username,
-                password: !!e.errors.password
-            }
-        });
+        var invalid = new Error('Invalid fields');
+        invalid.status = 400;
+        return next(invalid);
     }).catch(next);
 });
 
@@ -71,6 +69,11 @@ router.get('/users/:username', function(req, res, next) {
         return res.json({ status: 'success', data: user });
     }).catch(console.log);
 });
+
+/**
+ * Retrieve an OAUTH2 token.
+ */
+router.post('/oauth/token', oauth2.token);
 
 /**
  * RESTful api error handler.
