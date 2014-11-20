@@ -7,7 +7,7 @@ var Promise = require('bluebird'),
 
 // Hashing settings
 var KEY_LEN = 256,
-    ITERATIONS = 100000;
+    ITERATIONS = 25000;
 
 var schema = new Schema({
     username: {
@@ -17,8 +17,8 @@ var schema = new Schema({
         trim: true,
         required: true
     },
-    password: { type: Buffer, required: true },
-    salt: Buffer
+    password: { type: String, required: true },
+    salt: String
 });
 
 /**
@@ -55,18 +55,36 @@ schema.pre('save', function(next) {
     if (!user.isModified('password')) { return next(); }
 
     return crypto.randomBytesAsync(KEY_LEN).then(function(buffer) {
-        user.salt = buffer;
+        user.salt = buffer.toString('base64');
         return crypto.pbkdf2Async(user.password,
                 user.salt, ITERATIONS, KEY_LEN);
     }).then(function(derivedKey) {
-        user.password = derivedKey;
+        user.password = derivedKey.toString('base64');
         return next();
     });
 });
 
+/**
+ * Check if a username/password combination is valid.
+ * @return a boolean Promise.
+ */
+schema.statics.checkUserPass = function(username, password) {
+    return this.findOneAsync({ username: username }).then(function(user) {
+        if (!user) { return false; }
+        return crypto.pbkdf2Async(password, user.salt, ITERATIONS, KEY_LEN)
+            .then(function(derivedKey) {
+                return derivedKey.toString('base64') === user.password;
+            });
+    });
+};
+
+/**
+ * Virtual to extract timestamp from BSON ObjectID.
+ */
 schema.virtual('timestamp').get(function() {
     return this._id.getTimestamp();
 });
+
 
 schema.set('toObject', { virtuals: true });
 
