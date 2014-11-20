@@ -9,7 +9,7 @@ var Promise = require('bluebird'),
  */
 var schema = new Schema({
     name: { type: String, required: true },
-    redirectURI: { type: String, required: true },
+    redirect_uri: { type: String, required: true },
     secret: { type: String, required: true }
 });
 

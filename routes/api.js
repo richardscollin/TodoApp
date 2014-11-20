@@ -3,15 +3,23 @@
 var express = require('express'),
     router = express.Router(),
     oauth2 = require('../oauth'),
-    // passport = require('passport'),
+    passport = require('passport'),
     mongoose = require('mongoose'),
     ValidationError = mongoose.Error.ValidationError;
 
 
-// Import models.
+/**
+ * Database models.
+ */
 var User = require('../models/user.js');
 
-// router.post('/signin', passport.authenticate('local' ));
+/**
+ * Test route.
+ */
+var hasToken = passport.authenticate('bearer', { session: false });
+router.get('/test', hasToken, function(req, res) {
+    res.send('Hi!');
+});
 
 /**
  * Creates a new user.
