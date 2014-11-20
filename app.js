@@ -30,6 +30,14 @@ app.locals.description = 'The most awesome todo app in the world.';
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
+app.use(sassMiddleware({
+    src: path.join(__dirname, 'scss'),
+    dest: path.join(__dirname, 'public_generated/css'),
+    prefix: '/css',
+    outputStyle: 'compressed'
+}));
+app.use(express.static(path.join(__dirname, 'public_generated')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -54,14 +62,6 @@ app.use(function(req, res, next) {
 app.use('/', routes);
 app.use('/api', api);
 
-app.use(sassMiddleware({
-    src: path.join(__dirname, 'scss'),
-    dest: path.join(__dirname, 'public_generated/css'),
-    prefix: '/css',
-    outputStyle: 'compressed'
-}));
-app.use(express.static(path.join(__dirname, 'public_generated')));
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Catch 404 and forward to error handler.
 app.use(function(req, res, next) {
