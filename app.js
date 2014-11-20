@@ -27,8 +27,7 @@ app.locals.env = app.get('env');
 app.locals.title = 'Todo App';
 app.locals.description = 'The most awesome todo app in the world.';
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/icon.png'));
 app.use(logger('dev'));
 app.use(sassMiddleware({
     src: path.join(__dirname, 'scss'),
