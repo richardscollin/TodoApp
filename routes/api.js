@@ -2,34 +2,39 @@
 
 var express = require('express'),
     router = express.Router(),
+    oauth2 = require('../oauth'),
+    passport = require('passport'),
     mongoose = require('mongoose'),
     ValidationError = mongoose.Error.ValidationError;
 
-// Import models.
+
+/**
+ * Database models.
+ */
 var User = require('../models/user.js');
+
+/**
+ * Middleware for token authenticated requests.
+ */
+var hasToken = passport.authenticate('bearer', { session: false });
+
+/**
+ * Test token auth.
+ */
+router.get('/test', hasToken, function(req, res) {
+    res.send(req.user);
+});
 
 /**
  * Creates a new user.
  * @param username The username to create.
  * @param password The password to create.
- * @param signin=false Whether or not to sign in after authentification.
  */
 router.post('/users/new', function(req, res, next) {
-    if (req.session.loggedIn) {
-        var err = new Error('Already logged in');
-        err.status = 403;
-        return next(err);
-    }
-    var user = new User({
+    new User({
         username: req.body.username,
         password: req.body.password
-    });
-
-    return user.saveAsync().then(function(user) {
-        if (req.body.signin) {
-            req.session.username = user[0].username;
-            req.session.loggedIn = true;
-        }
+    }).saveAsync().then(function(user) {
         return res.json({
             status: 'success',
             data: {
@@ -39,20 +44,13 @@ router.post('/users/new', function(req, res, next) {
     }).catch(ValidationError, function(e) {
         if (e.errors.username && e.errors.username.message ===
                 'Username already exists') {
-            return res.status(409).json({
-                status: 'error',
-                message: 'Username already exists'
-            });
+            var err = new Error('Username already exists');
+            err.status = 409;
+            return next(err);
         }
-        console.log(e);
-        return res.status(400).json({
-            status: 'error',
-            message: 'Invalid fields',
-            fields: {
-                username: !!e.errors.username,
-                password: !!e.errors.password
-            }
-        });
+        var invalid = new Error('Invalid fields');
+        invalid.status = 400;
+        return next(invalid);
     }).catch(next);
 });
 
@@ -71,6 +69,11 @@ router.get('/users/:username', function(req, res, next) {
         return res.json({ status: 'success', data: user });
     }).catch(console.log);
 });
+
+/**
+ * Retrieve an OAUTH2 token.
+ */
+router.post('/oauth/token', oauth2.token);
 
 /**
  * RESTful api error handler.

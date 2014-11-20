@@ -66,14 +66,20 @@ schema.pre('save', function(next) {
 
 /**
  * Check if a username/password combination is valid.
- * @return a boolean Promise.
+ * @param {string} username The username.
+ * @param {password} password The password.
+ * @param {boolean} returnUser Whether or not to return the user if valid.
+ * @return A Promise with boolean on whether user/pass is valid.
  */
-schema.statics.checkUserPass = function(username, password) {
+schema.statics.checkUserPass = function(username, password, returnUser) {
     return this.findOneAsync({ username: username }).then(function(user) {
         if (!user) { return false; }
         return crypto.pbkdf2Async(password, user.salt, ITERATIONS, KEY_LEN)
             .then(function(derivedKey) {
-                return derivedKey.toString('base64') === user.password;
+                if (derivedKey.toString('base64') === user.password) {
+                    return returnUser ? user : true;
+                }
+                return false;
             });
     });
 };
