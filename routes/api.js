@@ -14,11 +14,15 @@ var express = require('express'),
 var User = require('../models/user.js');
 
 /**
- * Test route.
+ * Middleware for token authenticated requests.
  */
 var hasToken = passport.authenticate('bearer', { session: false });
+
+/**
+ * Test token auth.
+ */
 router.get('/test', hasToken, function(req, res) {
-    res.send('Hi!');
+    res.send(req.user);
 });
 
 /**
