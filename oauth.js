@@ -121,7 +121,6 @@ module.exports = exports = {
 
         // Validates the client.
         server.authorization(function(clientId, redirectUri, next) {
-            console.log(clientId);
             return Client.findById(clientId).then(function(client) {
                 if (!client) { return next(null); }
                 return next(null, client, new RegExp(client.redirect_uri)
