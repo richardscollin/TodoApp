@@ -17,6 +17,9 @@ var passport = require('passport');
  */
 require('./auth');
 
+/**
+ * Router middlewares.
+ */
 var routes = require('./routes');
 var api = require('./routes/api');
 
@@ -62,7 +65,6 @@ app.use(session({
         maxAge: null,
     },
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
 /**
@@ -105,7 +107,18 @@ module.exports = exports = new Promise(function(resolve, reject) {
         ('mongodb://' + (process.env.DB_PORT_27017_TCP_ADDR + ':' +
         process.env.DB_PORT_27017_TCP_PORT + '/todo_app')));
     db.on('open', function() {
-        resolve(app);
+        // Create a OAuth client for this app.
+        var Client = require('./models/client');
+        return Client.findByIdAndUpdateAsync('000000000000000000000000', {
+            name: 'Todo Web App',
+            redirect_uri: '^\/.*$',
+            secret: 'foo bar baz'
+        }, {
+            upsert: true,
+            new: true
+        }).then(function() {
+            resolve(app);
+        }).catch(console.log);
     });
     db.on('error', reject);
 });

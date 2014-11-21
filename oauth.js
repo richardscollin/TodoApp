@@ -3,6 +3,7 @@
 var Promise = require('bluebird'),
     oauth2orize = require('oauth2orize'),
     passport = require('passport'),
+    login = require('connect-ensure-login'),
     crypto = Promise.promisifyAll(require('crypto'));
 
 /**
@@ -21,7 +22,7 @@ server.serializeClient(function(client, next) {
     return next(null, client._id);
 });
 server.deserializeClient(function(id, next) {
-    Client.findOneAsync({ _id: id }).then(function(client) {
+    return Client.findById(id).then(function(client) {
         return next(null, client);
     }).catch(next);
 });
@@ -80,7 +81,7 @@ server.exchange(oauth2orize.exchange.password(function(client, username,
 /**
  * Implicit grant type.
  *
- * Grant implicit authorization. Mainly used for web/mobile apps.
+ * Grants implicit authorization. Mainly used for web/mobile apps.
  */
 server.grant(oauth2orize.grant.token(function(client, user, ares, next) {
     return generateToken(client, user).then(function(token) {
@@ -101,7 +102,33 @@ module.exports = exports = {
 
     /**
      * The authorization endpoint.
+     *
+     * Shows a screen letting user allow or deny access from a client.
      */
-    authorization: server.authorization(function(clientID, redirectURI, next) {
-    })
+    authorization: [
+        login.ensureLoggedIn('/signin'),
+        server.authorization(function(clientId, redirectUri, next) {
+            return Client.findById(clientId).then(function(client) {
+                if (!client) { return next(null); }
+                return next(null, client, new RegExp(client.redirect_uri)
+                        .test(redirectUri) ? redirectUri : null);
+            }).catch(next);
+        }),
+        function(req, res) {
+            res.render('dialog', {
+                client: req.oauth2.client,
+                transactionId: req.oauth2.transactionID
+            });
+        }
+    ],
+
+    /**
+     * The user decision endpoint.
+     *
+     * Allows a user to allow or deny access requested from the client.
+     */
+    decision: [
+        login.ensureLoggedIn('/signin'),
+        server.decision()
+    ]
 };

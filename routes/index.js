@@ -2,7 +2,8 @@
 
 var express = require('express'),
     router = express.Router(),
-    passport = require('passport');
+    passport = require('passport'),
+    oauth2 = require('../oauth');
 
 /**
  * Database models.
@@ -74,10 +75,16 @@ router.post('/signin', function(req, res, next) {
         }
         return req.logIn(user, function(err) {
             if (err) { return next(err); }
-            return res.redirect('/');
+            return res.redirect('/signin/authorize');
         });
     })(req, res, next);
 });
+
+/**
+ * Gets user authorization for OAUTH2.0.
+ */
+router.get('/signin/authorize', oauth2.authorization);
+router.post('/signin/authorize/decision', oauth2.decision);
 
 /**
  * Signs user out.

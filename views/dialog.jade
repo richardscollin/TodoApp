@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  div.container
+    div.well
+      h1 Hello, #{user.username_original_case}.
+      p
+        b= client.name
+        | &nbsp;is requesting to access your account.
+      p Do you approve?
+      form(action='/signin/authorize/decision' method='post')
+        input(name='transaction_id' type='hidden' value=transactionId)
+        button(type='submit' value='Deny').btn.btn-danger Deny
+        button(type='submit' value='Allow').btn.btn-primary Allow
