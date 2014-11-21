@@ -10,5 +10,5 @@ block content
       p Do you approve?
       form(action='/signin/authorize/decision' method='post')
         input(name='transaction_id' type='hidden' value=transactionId)
-        button(type='submit' value='Deny').btn.btn-danger Deny
+        button(type='submit' value='Deny' name='cancel').btn.btn-danger Deny
         button(type='submit' value='Allow').btn.btn-primary Allow

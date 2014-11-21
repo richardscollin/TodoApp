@@ -114,12 +114,23 @@ module.exports = exports = {
                         .test(redirectUri) ? redirectUri : null);
             }).catch(next);
         }),
-        function(req, res) {
-            res.render('dialog', {
-                client: req.oauth2.client,
-                transactionId: req.oauth2.transactionID
-            });
-        }
+
+        function(req, res, next) {
+            console.log(req.app.get('clientId'));
+            // If the client is not our client, ask for user authorization.
+            if (!req.oauth2.client._id.equals(req.app.get('clientId'))) {
+                return res.render('dialog', {
+                    client: req.oauth2.client,
+                    transactionId: req.oauth2.transactionID
+                });
+            }
+            // The client is our client, so we are authorizing it
+            // for the user by forwarding it to the server.decision()
+            // middleware.
+            req.body.transaction_id = req.oauth2.transactionID;
+            return next();
+        },
+        server.decision()
     ],
 
     /**

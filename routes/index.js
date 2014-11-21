@@ -3,6 +3,7 @@
 var express = require('express'),
     router = express.Router(),
     passport = require('passport'),
+    flash = require('connect-flash'),
     oauth2 = require('../oauth');
 
 /**
@@ -57,25 +58,28 @@ router.post('/register', function(req, res, next) {
 /**
  * Renders the sign in page.
  */
-router.get('/signin', function(req, res) {
-    res.render('signin', { title: 'Sign in' });
+router.get('/signin', flash(), function(req, res) {
+    res.render('signin', {
+        title: 'Sign in',
+        failed: req.flash('failed')[0],
+        username: req.flash('username')[0]
+    });
 });
 
 /**
  * Checks sign in credentials.
  */
-router.post('/signin', function(req, res, next) {
+router.post('/signin', flash(), function(req, res, next) {
     return passport.authenticate('local', function(err, user) {
         if (err) { return next(err); }
         if (!user) {
-            return res.render('signin', {
-                username: req.body.username,
-                failed: true
-            });
+            req.flash('failed', true);
+            req.flash('username', req.body.username);
+            return res.redirect('/signin');
         }
         return req.logIn(user, function(err) {
             if (err) { return next(err); }
-            return res.redirect('/signin/authorize');
+            return res.redirect(req.session.returnTo || '/signin/authorize');
         });
     })(req, res, next);
 });
@@ -84,7 +88,7 @@ router.post('/signin', function(req, res, next) {
  * Gets user authorization for OAUTH2.0.
  */
 router.get('/signin/authorize', oauth2.authorization);
-router.post('/signin/authorize/decision', oauth2.decision);
+router.use('/signin/authorize/decision', oauth2.decision);
 
 /**
  * Signs user out.

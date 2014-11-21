@@ -116,7 +116,8 @@ module.exports = exports = new Promise(function(resolve, reject) {
         }, {
             upsert: true,
             new: true
-        }).then(function() {
+        }).then(function(client) {
+            app.set('clientId', client._id);
             resolve(app);
         }).catch(console.log);
     });
