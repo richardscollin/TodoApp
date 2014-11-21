@@ -53,7 +53,8 @@ function generateToken(client, user, size) {
  * Password grant type.
  *
  * Exchange username/password for access tokens.
- * Using User as client instead of Client.
+ * Using User as client instead of Client. All users can
+ * be client for themself or other users.
  */
 server.exchange(oauth2orize.exchange.password(function(client, username,
         password, scope, next) {
@@ -73,6 +74,17 @@ server.exchange(oauth2orize.exchange.password(function(client, username,
         return generateToken(client, user).then(function(token) {
             return next(null, token._id);
         });
+    }).catch(next);
+}));
+
+/**
+ * Implicit grant type.
+ *
+ * Grant implicit authorization. Mainly used for web/mobile apps.
+ */
+server.grant(oauth2orize.grant.token(function(client, user, ares, next) {
+    return generateToken(client, user).then(function(token) {
+        return next(null, token._id);
     }).catch(next);
 }));
 
