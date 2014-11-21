@@ -36,7 +36,7 @@ block content
       else
         h1 Welcome, #{user.username_original_case}!
         p Thank you for creating an account with us. We hope that you enjoy using our service.
-        a(href='/users/#{user.username_original_case}').btn.btn-primary Enter
+        a(href='/signin/authorize').btn.btn-primary Enter
 
 block scripts
   script(src='/js/controllers/registrationctrl.js')

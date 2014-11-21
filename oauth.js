@@ -107,7 +107,21 @@ module.exports = exports = {
      */
     authorization: [
         login.ensureLoggedIn('/signin'),
+
+        // Set default client_id, response_type, and redirect_uri to
+        // that of this web app if it does not exist.
+        function(req, res, next) {
+            // Not sure why response_type is in body and the other are in query.
+            req.body.response_type = req.body.response_type || 'token';
+            req.query.client_id = req.query.client_id ||
+                    req.app.get('clientId');
+            req.query.redirect_uri = req.query.redirect_uri || '/';
+            return next();
+        },
+
+        // Validates the client.
         server.authorization(function(clientId, redirectUri, next) {
+            console.log(clientId);
             return Client.findById(clientId).then(function(client) {
                 if (!client) { return next(null); }
                 return next(null, client, new RegExp(client.redirect_uri)
@@ -116,7 +130,6 @@ module.exports = exports = {
         }),
 
         function(req, res, next) {
-            console.log(req.app.get('clientId'));
             // If the client is not our client, ask for user authorization.
             if (!req.oauth2.client._id.equals(req.app.get('clientId'))) {
                 return res.render('dialog', {

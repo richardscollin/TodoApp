@@ -111,7 +111,7 @@ module.exports = exports = new Promise(function(resolve, reject) {
         var Client = require('./models/client');
         return Client.findByIdAndUpdateAsync('000000000000000000000000', {
             name: 'Todo Web App',
-            redirect_uri: '^\/.*$',
+            redirect_uri: '^\/[^\/]*$',
             secret: 'foo bar baz'
         }, {
             upsert: true,

@@ -21,37 +21,37 @@ router.get('/', function(req, res) {
 /**
  * Renders the registration page.
  */
-router.get('/register', function(req, res) {
-    res.render('register', { title: 'Create a new account' });
+router.get('/register', flash(), function(req, res) {
+    res.render('register', {
+        title: 'Create a new account',
+        duplicateUser: req.flash('duplicateUser')[0],
+        invalidUsername: req.flash('invalidUsername')[0],
+        invalidPassword: req.flash('invalidPassword')[0],
+        invalidPasswordConfirm: req.flash('invalidPasswordConfirm')[0]
+    });
 });
 
 /**
  * Creates a new user and logs in.
  */
-router.post('/register', function(req, res, next) {
-    // Show welcome screen if logged in.
-    if (req.user) {
-        return res.render('register');
-    }
-
+router.post('/register', flash(), function(req, res, next) {
     // Password does not match password confirmation.
     if (req.body.passwordConfirm !== req.body.password) {
-        return res.render('register', {
-            invalidPasswordConfirm: true,
-        });
+        req.flash('invalidPasswordConfirm', true);
+        return res.redirect('/register');
     }
+
     User.newUser(req.body.username, req.body.password).then(function(user) {
         // Login and redirect to post-registration page
         return req.logIn(user, function(err) {
             if (err) { return next(err); }
-            res.redirect('/register');
+            return res.redirect('/register');
         });
     }).catch(function(e) {
-        return res.render('register', {
-            duplicateUser: e.duplicate,
-            invalidUsername: e.username,
-            invalidPassword: e.password
-        });
+        req.flash('duplicateUser', e.duplicate);
+        req.flash('invalidUsername', e.username);
+        req.flash('invalidPassword', e.password);
+        return res.redirect('/register');
     });
 });
 
