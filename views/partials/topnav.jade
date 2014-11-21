@@ -9,5 +9,10 @@ nav(role='navigation').navbar.navbar-default
       a(href='/').navbar-brand Todo App
     div(collapse='collapsed').collapse.navbar-collapse
       ul.nav.navbar-nav.navbar-right
-        li: a(href='/signin') Sign In
-        li: a(href='/register') Register
+        if !user
+          li: a(href='/signin') Sign In
+          li: a(href='/register') Register
+        else
+          li: a(href='/users/#{user.username_original_case}')= user.username_original_case
+          li: a(href='/signout') Sign Out
+

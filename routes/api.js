@@ -3,9 +3,7 @@
 var express = require('express'),
     router = express.Router(),
     oauth2 = require('../oauth'),
-    passport = require('passport'),
-    mongoose = require('mongoose'),
-    ValidationError = mongoose.Error.ValidationError;
+    passport = require('passport');
 
 
 /**
@@ -26,31 +24,14 @@ router.get('/test', hasToken, function(req, res) {
 });
 
 /**
- * Creates a new user.
- * @param username The username to create.
- * @param password The password to create.
+ * Create a new user.
  */
 router.post('/users/new', function(req, res, next) {
-    new User({
-        username: req.body.username,
-        password: req.body.password
-    }).saveAsync().then(function(user) {
+    User.newUser(req.body.username, req.body.password).then(function(user) {
         return res.json({
             status: 'success',
-            data: {
-                username: user[0].username
-            }
+            data: { username: user.username }
         });
-    }).catch(ValidationError, function(e) {
-        if (e.errors.username && e.errors.username.message ===
-                'Username already exists') {
-            var err = new Error('Username already exists');
-            err.status = 409;
-            return next(err);
-        }
-        var invalid = new Error('Invalid fields');
-        invalid.status = 400;
-        return next(invalid);
     }).catch(next);
 });
 

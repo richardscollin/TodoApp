@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  div.container
+    div.well
+      h1 Sign in
+      form(role='form' name='form' method='post' action='/signin')
+        if failed
+          div(role='alert').alert.alert-danger Invalid username or password.
+        div.form-group
+          label.control-label Username
+          input(type='text' name='username' placeholder='Username' value='#{username || ""}').form-control
+        div.form-group
+          label.control-label Password
+          input(type='password' name='password' placeholder='Password').form-control
+        div.form-group
+          button(type='submit').btn.btn-primary Sign In

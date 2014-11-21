@@ -88,14 +88,20 @@ server.grant(oauth2orize.grant.token(function(client, user, ares, next) {
     }).catch(next);
 }));
 
-/**
- * The token endpoint middleware.
- */
 module.exports = exports = {
+    /**
+    * The token endpoint middleware.
+    */
     token: [
         passport.authenticate(['basic', 'oauth2-client-password'],
                 { session: false }),
         server.token(),
         server.errorHandler()
-    ]
+    ],
+
+    /**
+     * The authorization endpoint.
+     */
+    authorization: server.authorization(function(clientID, redirectURI, next) {
+    })
 };

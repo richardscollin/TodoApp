@@ -6,6 +6,8 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var session = require('express-session');
+var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var sassMiddleware = require('node-sass-middleware');
 var passport = require('passport');
@@ -47,8 +49,29 @@ app.use(express.static(path.join(__dirname, 'public_generated')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(session({
+    secret: process.env.SECRET || 'aa2814b45d12c9bdd6f2feaf31b096d6',
+    saveUninitialized: false,
+    resave: true,
+    proxy: true,
+    secure: app.get('env') === 'production',
+    cookie: {
+        path: '/',
+        httpOnly: false,
+        maxAge: null,
+    },
+}));
 
 app.use(passport.initialize());
+app.use(passport.session());
+/**
+ * Map username to locals.
+ */
+app.use(function(req, res, next) {
+    res.locals.user = req.user;
+    return next();
+});
 
 app.use('/', routes);
 app.use('/api', api);

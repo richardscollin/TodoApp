@@ -29,10 +29,10 @@ passport.deserializeUser(function(id, next) {
 /**
  * Passport.js local strategy.
  *
- * Passes a user to the serialize function.
+ * Authenticates a username/password combination against the local database.
  */
 passport.use(new LocalStrategy(function(username, password, next) {
-    User.checkUserPass(username, password, true).then(function(user) {
+    return User.checkUserPass(username, password, true).then(function(user) {
         return next(null, user);
     }).catch(next);
 }));
@@ -44,7 +44,7 @@ passport.use(new LocalStrategy(function(username, password, next) {
  * I'm making all users clients for the password grant_type.
  */
 passport.use(new BasicStrategy(function(username, password, next) {
-    User.checkUserPass(username, password, true).then(function(user) {
+    return User.checkUserPass(username, password, true).then(function(user) {
         return next(null, user);
     }).catch(next);
 }));
@@ -53,7 +53,7 @@ passport.use(new BasicStrategy(function(username, password, next) {
  * Passport.js client password strategy.
  */
 passport.use(new ClientPasswordStrategy(function(clientId, clientSecret, next) {
-    Client.findOne({ _id: clientId, secret: clientSecret })
+    return Client.findOne({ _id: clientId, secret: clientSecret })
         .then(function(client) {
             return next(null, client);
         }).catch(next);
