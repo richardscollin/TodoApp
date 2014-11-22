@@ -53,36 +53,44 @@ app.use(express.static(path.join(__dirname, 'public_generated')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(session({
-    secret: process.env.SECRET || 'aa2814b45d12c9bdd6f2feaf31b096d6',
-    saveUninitialized: false,
-    resave: true,
-    proxy: true,
-    secure: app.get('env') === 'production',
-    cookie: {
-        path: '/',
-        httpOnly: false,
-        maxAge: null,
-    },
-    store: new RedisStore({
-        host: process.env.REDIS_PORT_6379_TCP_ADDR,
-        port: process.env.REDIS_PORT_6379_TCP_PORT
-    })
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-/**
- * Map username to locals.
- */
-app.use(function(req, res, next) {
-    res.locals.user = req.user;
-    return next();
-});
 
-app.use('/', routes);
-app.use('/api', api);
+app.use('/api', passport.initialize(), api);
+app.use('/', [
+    cookieParser(),
 
+    /**
+     * Session store.
+     */
+    session({
+        secret: process.env.SECRET || 'aa2814b45d12c9bdd6f2feaf31b096d6',
+        saveUninitialized: false,
+        resave: false,
+        proxy: true,
+        secure: app.get('env') === 'production',
+        cookie: {
+            path: '/',
+            httpOnly: true,
+            maxAge: null,
+        },
+        store: new RedisStore({
+            host: process.env.REDIS_PORT_6379_TCP_ADDR,
+            port: process.env.REDIS_PORT_6379_TCP_PORT,
+            ttl: 86400
+        })
+    }),
+
+    passport.initialize(),
+    passport.session(),
+
+    /**
+     * Map username to locals.
+     */
+    function(req, res, next) {
+        console.log(req.session);
+        res.locals.user = req.user;
+        return next();
+    }
+], routes);
 
 /**
  * Forward 404s to error handler.
