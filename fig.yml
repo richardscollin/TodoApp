@@ -27,7 +27,7 @@ redis:
 
 # The node webserver.
 web:
-  image: node:latest
+  image: dockerfile/nodejs-bower-grunt:latest
   ports:
     - "3000:3000"
   working_dir: /usr/app/src

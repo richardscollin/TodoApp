@@ -16,6 +16,10 @@ html
     <![endif]-->
     style [ng-cloak] { display: none; }
   body(ng-app='app' ng-cloak)
+    oauth(client-id='000000000000000000000000' redirect-uri='/'
+        site="OAUTH_SERVER_URI_HERE"
+        profile-uri="PROFILE_URI_HERE"
+        scope="SCOPE_HERE")
     include partials/topnav
     block content
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js')
@@ -23,6 +27,7 @@ html
     script(src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/0.1.6/js/material.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.0/angular.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.2/ui-bootstrap-tpls.min.js')
-    script $(function(){$.material.init();});
+    script(src='/vendor/oauth-ng/dist/oauth-ng.js')
     script(src='/js/main.js')
+    script $(function(){$.material.init();});
     block scripts

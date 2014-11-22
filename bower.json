@@ -1,0 +1,26 @@
+{
+  "name": "Todo",
+  "version": "0.0.0",
+  "homepage": "https://github.com/richardscollin/TodoApp",
+  "authors": [
+    "Kelvin Chen",
+    "Collin Richards",
+    "Binjie Sun"
+  ],
+  "description": "The most amazing todo app in the world.",
+  "keywords": [
+    "todo"
+  ],
+  "license": "N/A",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "oauth-ng": "~0.3.2"
+  }
+}

@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('app', [
+    'oauth',
     'ui.bootstrap',
     'app.controllers',
     'app.directives'

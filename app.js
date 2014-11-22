@@ -51,6 +51,7 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public_generated')));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/vendor', express.static(path.join(__dirname, 'bower_components')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -86,7 +87,6 @@ app.use('/', [
      * Map username to locals.
      */
     function(req, res, next) {
-        console.log(req.session);
         res.locals.user = req.user;
         return next();
     }
