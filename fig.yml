@@ -1,18 +1,40 @@
-# Data only container
+# Data only container.
 datastore:
   image: busybox:latest
   volumes:
-    - /data/db
+    - /data
   command: ["true"]
 
+# Mongo container.
 db:
   image: mongo:latest
   volumes_from:
     - datastore
 
-web:
-  build: .
+# Mongo CLI
+mongo:
+  image: mongo:latest
   links:
     - db
+  command: sh -c 'exec mongo "$DB_PORT_27017_TCP_ADDR:$DB_PORT_27017_TCP_PORT/todo_app"'
+
+# Redis server for session store.
+redis:
+  image: redis:latest
+  volumes_from:
+    - datastore
+  command: ['redis-server', '--appendonly', 'yes']
+
+# The node webserver.
+web:
+  image: node:latest
   ports:
-    - "80:3000"
+    - "3000:3000"
+  working_dir: /usr/app/src
+  volumes:
+    - .:/usr/app/src
+  links:
+    - db
+    - redis
+  command: ['npm', 'start']
+

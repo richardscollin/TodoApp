@@ -7,6 +7,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var sassMiddleware = require('node-sass-middleware');
@@ -64,6 +65,10 @@ app.use(session({
         httpOnly: false,
         maxAge: null,
     },
+    store: new RedisStore({
+        host: process.env.REDIS_PORT_6379_TCP_ADDR,
+        port: process.env.REDIS_PORT_6379_TCP_PORT
+    })
 }));
 app.use(passport.initialize());
 app.use(passport.session());
