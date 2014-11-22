@@ -22,6 +22,10 @@ router.get('/', function(req, res) {
  * Renders the registration page.
  */
 router.get('/register', flash(), function(req, res) {
+    if (req.user) {
+        return res.redirect('/');
+    }
+
     res.render('register', {
         title: 'Create a new account',
         duplicateUser: req.flash('duplicateUser')[0],
@@ -59,6 +63,10 @@ router.post('/register', flash(), function(req, res, next) {
  * Renders the sign in page.
  */
 router.get('/signin', flash(), function(req, res) {
+    if (req.user) {
+        return res.redirect('/');
+    }
+
     res.render('signin', {
         title: 'Sign in',
         failed: req.flash('failed')[0],
