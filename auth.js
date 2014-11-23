@@ -65,7 +65,8 @@ passport.use(new ClientPasswordStrategy(function(clientId, clientSecret, next) {
 passport.use(new BearerStrategy(function(accessToken, next) {
     return AccessToken.findOneAsync({ _id: accessToken }).then(function(token) {
         if (!token) { return next(null, null); }
-        return User.findOneAsync({ _id: token.user_id }).then(function(user) {
+        return User.findOneAsync({ _id: token.user_id },
+                { password: false, salt: false }).then(function(user) {
             return next(null, user);
         });
     }).catch(next);
