@@ -23,9 +23,8 @@ router.get('/', function(req, res) {
  */
 router.get('/register', flash(), function(req, res) {
     if (req.user) {
-        return res.redirect('/');
+        return res.redirect('/dashboard');
     }
-
     res.render('register', {
         title: 'Create a new account',
         duplicateUser: req.flash('duplicateUser')[0],
@@ -49,7 +48,10 @@ router.post('/register', flash(), function(req, res, next) {
         // Login and redirect to post-registration page
         return req.logIn(user, function(err) {
             if (err) { return next(err); }
-            return res.redirect('/register');
+            return res.render('register', {
+                title: 'Welcome ' + req.user.username_original_case,
+                user: req.user
+            });
         });
     }).catch(function(e) {
         req.flash('duplicateUser', e.duplicate);
@@ -64,7 +66,7 @@ router.post('/register', flash(), function(req, res, next) {
  */
 router.get('/signin', flash(), function(req, res) {
     if (req.user) {
-        return res.redirect('/');
+        return res.redirect('/dashboard');
     }
 
     res.render('signin', {
@@ -105,5 +107,14 @@ router.get('/signout', function(req, res) {
     req.logout();
     res.redirect('/');
 });
+
+/**
+ * Renders the dashboard.
+ */
+router.get('/dashboard', function(req, res) {
+    if (!req.user) { return res.redirect('/signin'); }
+    res.render('dashboard');
+});
+
 
 module.exports = exports = router;

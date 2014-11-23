@@ -115,7 +115,7 @@ module.exports = exports = {
             req.body.response_type = req.body.response_type || 'token';
             req.query.client_id = req.query.client_id ||
                     req.app.get('clientId');
-            req.query.redirect_uri = req.query.redirect_uri || '/';
+            req.query.redirect_uri = req.query.redirect_uri || '/dashboard';
             return next();
         },
 

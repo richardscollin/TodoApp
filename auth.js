@@ -53,7 +53,7 @@ passport.use(new BasicStrategy(function(username, password, next) {
  * Passport.js client password strategy.
  */
 passport.use(new ClientPasswordStrategy(function(clientId, clientSecret, next) {
-    return Client.findOne({ _id: clientId, secret: clientSecret })
+    return Client.findOneAsync({ _id: clientId, secret: clientSecret })
         .then(function(client) {
             return next(null, client);
         }).catch(next);

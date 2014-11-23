@@ -21,6 +21,6 @@
     "tests"
   ],
   "dependencies": {
-    "oauth-ng": "~0.3.2"
+    "angular-local-storage": "~0.1.5"
   }
 }

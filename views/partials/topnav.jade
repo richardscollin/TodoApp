@@ -6,13 +6,13 @@ nav(role='navigation').navbar.navbar-default
         span.icon-bar
         span.icon-bar
         span.icon-bar
-      a(href='/').navbar-brand Todo App
+      a(href='/' target='_self').navbar-brand Todo App
     div(collapse='collapsed').collapse.navbar-collapse
       ul.nav.navbar-nav.navbar-right
         if !user
-          li: a(href='/signin') Sign In
-          li: a(href='/register') Register
+          li: a(href='/signin' target='_self') Sign In
+          li: a(href='/register' target='_self') Register
         else
-          li: a(href='/users/#{user.username_original_case}')= user.username_original_case
-          li: a(href='/signout') Sign Out
+          li: a(href='/dashboard' target='_self')= user.username_original_case
+          li: a(href='/signout' target='_self') Sign Out
 
