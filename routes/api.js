@@ -17,18 +17,21 @@ var User = require('../models/user.js');
 var hasToken = passport.authenticate('bearer', { session: false });
 
 /**
- * Test token auth.
+ * Checks if the user from the token matches the one from the request.
  */
-router.get('/test', hasToken, function(req, res) {
-    res.send(req.user);
-});
+function checkUser(req, res, next) {
+    if (req.params.username.toLowerCase() !== req.user.username) {
+        return res.status(401).send('Unauthorized');
+    }
+    return next();
+}
 
 /**
  * Create a new user.
  */
 router.post('/users/new', function(req, res, next) {
     User.newUser(req.body.username, req.body.password).then(function(user) {
-        return res.json({
+        return res.status(201).json({
             status: 'success',
             data: { username: user.username }
         });
@@ -38,21 +41,15 @@ router.post('/users/new', function(req, res, next) {
 /**
  * Gets a user's info.
  */
-router.get('/users/:username', function(req, res, next) {
-    return User.findOneAsync({
-        username: req.params.username
-    }, { username: true }).then(function(user) {
-        if (!user) {
-            var err = new Error('User does not exist');
-            err.status = 404;
-            return next(err);
-        }
-        return res.json({ status: 'success', data: user });
-    }).catch(console.log);
+router.get('/users/:username', hasToken, checkUser, function(req, res) {
+    return res.json({
+        status: 'success',
+        data: req.user
+    });
 });
 
 /**
- * Retrieve an OAUTH2 token.
+ * Retrieves an OAUTH2 token.
  */
 router.post('/oauth/token', oauth2.token);
 
