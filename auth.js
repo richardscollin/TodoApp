@@ -7,9 +7,7 @@ var passport = require('passport'),
             require('passport-oauth2-client-password').Strategy,
     BearerStrategy = require('passport-http-bearer').Strategy;
 
-/**
- * Database models.
- */
+// Import database models.
 var User = require('./models/user'),
     Client = require('./models/client'),
     AccessToken = require('./models/accesstoken');
@@ -28,7 +26,6 @@ passport.deserializeUser(function(id, next) {
 
 /**
  * Passport.js local strategy.
- *
  * Authenticates a username/password combination against the local database.
  */
 passport.use(new LocalStrategy(function(username, password, next) {
@@ -39,7 +36,6 @@ passport.use(new LocalStrategy(function(username, password, next) {
 
 /**
  * Passport.js basic strategy.
- *
  * This is supposed to authenticate the client, but
  * I'm making all users clients for the password grant_type.
  */

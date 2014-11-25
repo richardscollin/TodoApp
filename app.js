@@ -13,34 +13,27 @@ var bodyParser = require('body-parser');
 var sassMiddleware = require('node-sass-middleware');
 var passport = require('passport');
 
-/**
- * Load Passport.js settings.
- */
+// Load Passport.js settings.
 require('./auth');
 
-/**
- * Router middlewares.
- */
+// Import router middleware.
 var routes = require('./routes');
 var api = require('./routes/api');
 
 var app = express();
 var db = mongoose.connection;
 
-/**
- * Set Express configs.
- */
+// Set express configs.
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('trust proxy', true);
 
-/**
- * Set globals.
- */
+// Set locals for access in the views.
 app.locals.env = app.get('env');
 app.locals.title = 'Todo App';
 app.locals.description = 'The most awesome todo app in the world.';
 
+// Middleware stack.
 app.use(favicon(__dirname + '/public/icon.png'));
 app.use(logger('dev'));
 app.use(sassMiddleware({
@@ -59,9 +52,7 @@ app.use('/api', passport.initialize(), api);
 app.use('/', [
     cookieParser(),
 
-    /**
-     * Session store.
-     */
+    // Configure session store.
     session({
         secret: process.env.SECRET || 'aa2814b45d12c9bdd6f2feaf31b096d6',
         saveUninitialized: false,
@@ -83,27 +74,21 @@ app.use('/', [
     passport.initialize(),
     passport.session(),
 
-    /**
-     * Map username to locals.
-     */
+    // Map username to locals.
     function(req, res, next) {
         res.locals.user = req.user;
         return next();
     }
 ], routes);
 
-/**
- * Forward 404s to error handler.
- */
+// Forward 404 to error handler.
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-/**
- * Error handler.
- */
+// Error handler
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {

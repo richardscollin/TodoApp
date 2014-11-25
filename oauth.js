@@ -6,9 +6,7 @@ var Promise = require('bluebird'),
     login = require('connect-ensure-login'),
     crypto = Promise.promisifyAll(require('crypto'));
 
-/**
- * Database models.
- */
+// Database models.
 var Client = require('./models/client'),
     User = require('./models/user'),
     AccessToken = require('./models/accesstoken');
@@ -28,13 +26,13 @@ server.deserializeClient(function(id, next) {
 });
 
 /**
- * Function to generate a token.
+ * Function to generate a new AccessToken.
  *
  * Saves the token to the database before returning it.
  * @param {Client} client The oauth2 client.
  * @param {User} user The oauth2 user.
  * @param {number} size=256 The size of the token.
- * @return {AccessToken Promise} a base64 representation of the token.
+ * @return {Promise<AccessToken._id>} The id of the access token.
  */
 function generateToken(client, user, size) {
     return crypto.randomBytesAsync(size || 256).then(function(buffer) {
@@ -52,7 +50,6 @@ function generateToken(client, user, size) {
 
 /**
  * Password grant type.
- *
  * Exchange username/password for access tokens.
  * Using User as client instead of Client. All users can
  * be client for themself or other users.
@@ -80,7 +77,6 @@ server.exchange(oauth2orize.exchange.password(function(client, username,
 
 /**
  * Implicit grant type.
- *
  * Grants implicit authorization. Mainly used for web/mobile apps.
  */
 server.grant(oauth2orize.grant.token(function(client, user, ares, next) {
@@ -102,7 +98,6 @@ module.exports = exports = {
 
     /**
      * The authorization endpoint.
-     *
      * Shows a screen letting user allow or deny access from a client.
      */
     authorization: [
@@ -147,7 +142,6 @@ module.exports = exports = {
 
     /**
      * The user decision endpoint.
-     *
      * Allows a user to allow or deny access requested from the client.
      */
     decision: [
