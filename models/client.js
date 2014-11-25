@@ -6,7 +6,13 @@ var Promise = require('bluebird'),
     CastError = mongoose.Error.CastError;
 
 /**
- * Model to store clients for oauth2 in the database.
+ * Database models for OAuth2.0 clients.
+ * 
+ * @typedef Client
+ * @property {ObjectId} _id The client's id.
+ * @property {string} name The client's name.
+ * @property {string} redirect_uri The uri to redirect to after authorization.
+ * @property {string} secret The client's secret used for authentification.
  */
 var schema = new Schema({
     name: { type: String, required: true },
@@ -16,9 +22,11 @@ var schema = new Schema({
 
 /**
  * Finds a client by its id.
- *
  * Mongoose already has a findById function, but I am
  * implementing my own to catch the CastError.
+ * 
+ * @param {ObjectId} id The client id to search for.
+ * @return {Promise<Client>} The client that matches the id.
  */
 schema.statics.findById = function(id) {
     return this.findOneAsync({ _id: id }).then(function(client) {

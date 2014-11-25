@@ -6,12 +6,20 @@ var Promise = require('bluebird'),
     crypto = Promise.promisifyAll(require('crypto')),
     ValidationError = mongoose.Error.ValidationError;
 
-/**
- * Hashing settings.
- */
+// Hashing settings.
 var KEY_LEN = 256,
     ITERATIONS = 25000;
 
+/**
+ * The User database model.
+ *
+ * @typedef User
+ * @property {ObjectId} _id The user's id.
+ * @property {string} username The user's username normalized to lowercase.
+ * @property {string} username_original_case The user's original username.
+ * @property {string} password The PBKDF2 hashed password in base64.
+ * @property {string} salt The salt used to hash the password.
+ */
 var schema = new Schema({
     username: {
         type: String,
@@ -34,7 +42,7 @@ schema.path('username').validate(function(value) {
 }, 'Invalid username');
 
 /**
- * Checks for duplicate usernames.
+ * Validator that checks for duplicate username.
  */
 schema.path('username').validate(function(value, next) {
     return this.model('user').countAsync({ username: value })
@@ -44,7 +52,7 @@ schema.path('username').validate(function(value, next) {
 }, 'Username already exists');
 
 /**
- * Validates password.
+ * Validator for the password field.
  */
 schema.path('password').validate(function(value) {
     if (!value) { return false; }
@@ -52,7 +60,7 @@ schema.path('password').validate(function(value) {
 }, 'Invalid password');
 
 /**
- * Hashes password with PBKDF2 on save.
+ * Presave function that hashes password in PBKDF2.
  */
 schema.pre('save', function(next) {
     var user = this;
@@ -73,7 +81,7 @@ schema.pre('save', function(next) {
  *
  * @param {string} username The username of the new user.
  * @param {string} password The password of the new user.
- * @return {User Promise} The newly created user.
+ * @return {Promise<User>} The newly created user.
  */
 schema.statics.newUser = function(username, password) {
     return new this({
@@ -127,6 +135,7 @@ schema.virtual('timestamp').get(function() {
     return this._id.getTimestamp();
 });
 
+// Enable virtuals on toObject calls.
 schema.set('toObject', { virtuals: true });
 
 module.exports = exports = mongoose.model('user', schema);

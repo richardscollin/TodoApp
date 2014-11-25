@@ -6,7 +6,12 @@ var Promise = require('bluebird'),
     ObjectId = Schema.ObjectId;
 
 /**
- * Model to store access tokens for oauth2.
+ * The AccessToken database model.
+ *
+ * @typedef AccessToken
+ * @property {string} _id The access token's id.
+ * @property {ObjectId} user_id The id of the user that owns the token.
+ * @property {ObjectId} client_id The id of the client that is allowed access.
  */
 var schema = new Schema({
     _id: { type: String, required: true, index: { unique: true } },
